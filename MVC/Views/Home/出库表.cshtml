@@ -1,0 +1,147 @@
+﻿
+@{
+    ViewBag.Title = "出库表";
+    Layout = null;
+}
+<html>
+<head>
+    @Scripts.Render("~/bundles/easyui_scripts")
+    @Styles.Render("~/bundles/easyui_style")
+</head>
+<body style="padding: 0;">
+<table id="dg" class="easyui-datagrid" style="width:100%;height:100%;"
+       url="/Home/出库表DataGrid"
+       toolbar="#toolbar" pagination="true"
+       rownumbers="true" fitColumns="true" singleSelect="true" pageSize="20">
+    <thead>
+        <tr>
+            <th field="出库单号" width="50">入库单号</th>
+            <th field="产品名称" width="50">产品名称</th>
+            <th field="产品编号" width="50">产品编号</th>
+            <th field="电子标签出库数" width="50">出库数</th>
+            <th field="目标货位号" width="50">目标货位号</th>
+
+            <th field="出库人" width="50">出库人</th>
+            <th field="出库时间" width="50">出库时间</th>
+            <th field="出库状态" width="50">出库状态</th>
+        </tr>
+    </thead>
+</table>
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">手动出库</a>
+    <div style="float:right"><a href="#" class="easyui-linkbutton" onclick="viewAll()">查看全部</a></div>
+    <div style=" float:right">
+        出库状态:
+        <select id="状态值" class="easyui-combobox" panelHeight="auto" style="width:100px">
+            <option value="出库成功">已完成</option>
+            <option value="等待出库">未完成</option>
+        </select>
+        <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="getUser()">搜索</a>
+    </div>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'">
+    <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px;font-size:12px">
+        <h3>出库单号</h3>
+        <div style="margin-bottom:10px">
+            <input id="出库单号" name="出库单号" class="easyui-textbox" required="true" label="出库单号:" style="width:100%">
+        </div>
+        <div style="margin-bottom:10px">
+            <input id="产品名称" name="产品名称" class="easyui-textbox" required="true" label="产品名称:" style="width:100%">
+        </div>
+        <div style="margin-bottom:10px">
+            <input id="产品编号" name="产品编号" class="easyui-textbox" required="true" label="产品编号:" style="width:100%">
+        </div>
+        <div style="margin-bottom:10px">
+            <input id="出库数" name="电子标签出库数" class="easyui-textbox" required="true" label="出库数:" style="width:100%">
+        </div>
+
+        <div style="margin-bottom:10px">
+            <input id="货位号" name="目标货位号" class="easyui-textbox" required="true" label="出库货位号:" style="width:100%">
+        </div>
+
+        <div style="margin-bottom:10px">
+            <input id="出库人" name="出库人" class="easyui-textbox" required="true" label="出库人:" style="width:100%">
+        </div>
+        <div style="margin-bottom:10px">
+            <input name="出库时间" class="easyui-datebox" required="true" label="出库时间:" style="width:100%"></input>
+        </div>
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">确认出库</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">关闭</a>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    // 页面加载函数，进行页面保护
+    $(function () {
+        var name = sessionStorage.getItem('name');
+        if (name == null) {
+            window.location = ("/Home/登录");
+        } else {
+            person = name; // 把person设为全局变量
+        }
+    });
+    var url;
+  /*  $.ajax({
+        type: 'post',
+        url: '/Home/出库表DataJson1',
+        data: {},
+        success: function (data) {
+            var comboData = [];
+            for (i = 0; i < data.length; i++) {
+                comboData.push({ value: data[i]["货位编号"], text: data[i]["货位编号"] });
+            }
+            $('#货位号').combobox("loadData", comboData);
+        }
+    });*/
+    function viewAll() {
+        $('#dg').datagrid({
+            url: '/Home/出库表DataGrid'
+        })
+    }
+    function editUser() {
+        $('#货位号').textbox('readonly');
+        $('#出库单号').textbox('readonly');
+        $('#产品名称').textbox('readonly');
+        $('#产品编号').textbox('readonly');
+        $('#出库数').textbox('readonly');
+        $('#出库状态').textbox('readonly');
+
+        var row = $('#dg').datagrid('getSelected');
+        //选择一行，那一行存在把dialog打开
+        if (row) {
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle', '编辑出库单');
+            $('#fm').form('load', row);
+            url = '/Home/出库表UpDate';
+        }
+    }
+    function saveUser() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row.出库状态 == '出库成功') {
+            alert('请勿重复出库');
+            $('#dlg').dialog('close');
+            return;
+        }
+        $('#fm').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function () {
+                $('#dlg').dialog('close');		// close the dialog
+                $('#dg').datagrid('reload');	// 当我保存的时候 自动刷新！！！
+            }
+        });
+    }
+    function getUser() {
+        // 实现它的查询！！！！！
+        var status = $('#状态值').combobox('getValue');
+        $('#dg').datagrid({
+            url: '/Home/出库表DataJson',
+            queryParams: { id: status }
+        })
+    }
+</script>

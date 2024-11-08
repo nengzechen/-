@@ -1,0 +1,332 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>仓库1</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/bootstrap")
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-md-3">
+                <div class="thumbnail" style="border:none;">
+                    <div class="caption" style="text-align:center;">
+                        <h3 id="test">A区</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="thumbnail"style="border:none;">
+                    <div class="caption"style="text-align:center;">
+                        <h3>B区</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="thumbnail"style="border:none;">
+                    <div class="caption"style="text-align:center;">
+                        <h3>C区</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="thumbnail"style="border:none;">
+                    <div class="caption"style="text-align:center;">
+                        <h3>D区</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom:40px">
+            <div class="col-sm-6 col-md-3">
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" src="~/images/货位架.jpg" alt="..." style="width:200px">
+                    </div>
+                    <div class="media-body">
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">A-01-1</h5>
+                                <div>
+                                    <input id="input0" class="textbox" style="width:40px;height:20px;">
+                                    <span id="label0" class="label label-default" style="height: 20px;">S</span>
+                                    <input id="A-01-1" onclick="postTag.call(this)" type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">A-01-2</h5>
+                                <div>
+                                    <input id="input1" class="textbox" style="width:40px;height:20px;">
+                                    <span id="label1"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="A-01-2" onclick="postTag.call(this)" type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">A-01-3</h5>
+                                <div>
+                                    <input id="input2"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label2"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="A-01-3" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" src="~/images/货位架.jpg" alt="..." style="width:200px">
+                    </div>
+                    <div class="media-body">
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">B-01-1</h5>
+                                <div>
+                                    <input id="input3"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label3"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="B-01-1" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">B-01-2</h5>
+                                <div>
+                                    <input id="input4"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label4"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="B-01-2" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">B-01-3</h5>
+                                <div>
+                                    <input id="input5"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label5"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="B-01-3" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" src="~/images/货位架.jpg" alt="..." style="width:200px">
+                    </div>
+                    <div class="media-body">
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">C-01-1</h5>
+                                <div>
+                                    <input id="input6"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label6"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="C-01-1" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">C-01-2</h5>
+                                <div>
+                                    <input id="input7"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label7"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="C-01-2" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">C-01-3</h5>
+                                <div>
+                                    <input id="input8"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label8"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="C-01-3" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" src="~/images/货位架.jpg" alt="..." style="width:200px">
+                    </div>
+                    <div class="media-body">
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">D-01-1</h5>
+                                <div>
+                                    <input id="input9"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label9"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="D-01-1" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">D-01-2</h5>
+                                <div>
+                                    <input id="input10"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label10"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="D-01-2" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media">
+                            <div class="media-body">
+                                <h5 class="media-heading">D-01-3</h5>
+                                <div>
+                                    <input id="input11"class="textbox" style="width:40px;height:20px;">
+                                    <span id="label11"class="label label-default" style="height: 20px;">S</span>
+                                    <input id="D-01-3" onclick="postTag.call(this)"type="button" value="Y" style="width: 20px; height: 20px; border-radius: 50%; border: none;float: right;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    
+        <div>
+            <a href="#"onclick="refresh()">刷新</a>
+            <p>红色为入库，绿色为出库，黄色为移库，蓝色为移库入库，Y为出入库确认键</p>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    // 页面加载函数，进行页面保护
+    $(function () {
+        var name = sessionStorage.getItem('name');
+        if (name == null) {
+            window.location = ("/Home/登录");
+        } else {
+            person = name; // 把person设为全局变量
+        }
+    });
+    $.ajax({
+        type: 'get',
+        url: '/Home/仓库1DataJson',
+        success: function (data) {
+            if (data) {
+                var test = data;
+                // 写一个循环控制控件 灯光和电子标签信息的值改变！！！！
+                for (var i = 0; i < data.length; i++) {
+                    var status = test[i].灯光状态;
+                    var value = test[i].电子标签信息;
+                    var type = 'label' + i;
+                    var type1 = 'input' + i;
+                    if (status == '入库') {
+                        $("span[id=" + type + "]").attr('class', 'label label-danger');// 入库灯光显示红色
+                        $("input[id="+type1+"]").val(value);
+                    } else if (status == '出库') {
+                        $("span[id=" + type + "]").attr('class', 'label label-success');// 出库灯光显示绿色
+                        $("input[id=" + type1 + "]").val(value);
+                    } else if (status == '移库') {
+                        $("span[id=" + type + "]").attr('class', 'label label-warning');// 移库灯光显示黄色
+                        $("input[id=" + type1 + "]").val(value);
+                    } else if (status == '移入') {
+                        $("span[id=" + type + "]").attr('class', 'label label-info');// 移库入库扥光显示蓝色
+                        $("input[id=" + type1 + "]").val(value);
+                        
+                    }else {
+                        continue;
+                    }
+                }
+             
+            }
+        }
+    });
+    function postTag() {
+        var id = $(this).attr('id');
+        var status;
+        switch (id) {
+            case "A-01-1":
+                var status = 'label0';
+                break;
+            case "A-01-2":
+                var status = 'label1';
+                break;
+            case "A-01-3":
+                var status = 'label2';
+                break;
+            case "B-01-1":
+                var status = 'label3';
+                break;
+            case "B-01-2":
+                var status = 'label4';
+                break;
+            case "B-01-3":
+                var status = 'label5';
+                break;
+            case "C-01-1":
+                var status = 'label6';
+                break;
+            case "C-01-2":
+                var status = 'label7';
+                break;
+            case "C-01-3":
+                var status = 'label8';
+                break;
+            case "D-01-1":
+                var status = 'label9';
+                break;
+            case "D-01-2":
+                var status = 'label10';
+                break;
+            case "D-01-3":
+                var status = 'label11';
+                break;
+        }
+        var type = $("span[id=" + status + "]").attr('class');
+        if (type == 'label label-default') {
+            alert('当前无操作，请勿确认！');
+            return;
+        }
+        var statusValue;
+        if (type == 'label label-danger') {
+            var statusValue = '入库';
+        } else if (type == 'label label-success') {
+            var statusValue = '出库';
+        } else if (type == 'label label-warning') {
+            var statusValue = '移库';
+        } else if (type == 'label label-info') {
+            var statusValue = '移入';
+        }
+        $.ajax({
+            type: 'post',
+            data: { id: id, status: statusValue,name:person},
+            url:'/Home/仓库1UpDate',
+            success: function (data) {
+                if (data) {
+                    alert('确认成功！');
+                    window.location.reload();
+                }
+            }
+        });
+    }
+    function refresh() {
+        window.location.reload();
+    }
+</script>

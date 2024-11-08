@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewBag.Title = "移库表";
+    Layout = null;
+}
+<html>
+<head>
+    @Scripts.Render("~/bundles/easyui_scripts")
+    @Styles.Render("~/bundles/easyui_style")
+</head>
+<body style="padding: 0;">
+    <table id="dg" class="easyui-datagrid" style="width:100%;height:100%"
+           url="/Home/移库表DataGrid"
+           toolbar="#toolbar" pagination="true"
+           rownumbers="true" fitColumns="true" singleSelect="true"pageSize="20">
+        <thead>
+            <tr>
+                <th field="移库单号" width="50">移库单号</th>
+                <th field="电子标签移库数" width="50">电子标签移库数</th>
+                <th field="目标货位号" width="50">目标货位号</th>
+                <th field="当前货位号" width="50">当前货位号</th>
+                <th field="移库人" width="50">移库人</th>
+                <th field="移库时间" width="50">移库时间</th>
+                <th data-options="field:'移库状态',formatter:planUrl" width="50">移库状态</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">移库确认</a>
+        <div style="float:right"><a href="#" class="easyui-linkbutton" onclick="viewAll()">查看全部</a></div>
+        <div style=" float:right">
+            移库状态:
+            <select id="状态值" class="easyui-combobox" panelHeight="auto" style="width:100px">
+                <option value="移库完成">已完成</option>
+                <option value="等待移库">未完成</option>
+            </select>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="getUser()">搜索</a>
+        </div>
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'">
+        <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px;font-size:12px">
+            <h3>移库单</h3>
+            <div style="margin-bottom:10px">
+                <input id="移库单号" name="移库单号" class="easyui-textbox" required="true" label="移库单号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="移库数" name="电子标签移库数" class="easyui-textbox" required="true" label="移库数:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="目标货位号" name="目标货位号" class="easyui-textbox" required="true" label="目标货位号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="当前货位号" name="当前货位号" class="easyui-textbox" required="true" label="当前货位号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="移库人" class="easyui-textbox" required="true" label="移库人:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="移库时间" class="easyui-datebox" required="true" label="移库时间:" style="width:100%">
+            </div>
+        </form>
+    </div>
+
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">关闭</a>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    // 我这样写就多次查询了数据表  如果数据多很多开销很大！！！！写法非常糟糕！
+    function viewAll() {
+        $('#dg').datagrid({
+            url: '/Home/移库表DataGrid'
+        })
+    }
+    function getUser() {
+        // 实现它的查询！！！！！
+        var status = $('#状态值').combobox('getValue');
+        $('#dg').datagrid({
+            url: '/Home/移库表DataJson',
+            queryParams: { id: status }
+        })
+    }
+    function planUrl(val, row) {
+        if (val == '等待移库') {
+            return '<a href="javascript:void(0)"  onclick="editUser()" style="width:90px">等待移库</a>';
+        } else {
+            return val;
+        }
+    }
+    function editUser() {
+        $('#移库单号').textbox('readonly');
+        $('#目标货位号').textbox('readonly');
+        $('#移库数').textbox('readonly');
+        $('#电子标签货位号').textbox('readonly');
+        $('#当前货位号').textbox('readonly');
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle', '编辑入库单');
+            $('#fm').form('load', row);
+            url = '/Home/移库表UpDate';
+        }
+    }
+    function saveUser() {
+        var row = $('#dg').datagrid('getSelected');
+        var value = row.移库状态;
+        if (value == '移库完成') {
+            alert('已入库，请勿重复操作');
+            $('#dlg').dialog('close');
+            return;
+        }
+        $('#fm').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function () {
+                $('#dlg').dialog('close');		// close the dialog
+                $('#dg').datagrid('reload');	// reload the user data
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,245 @@
+﻿
+@{
+    ViewBag.Title = "采购表";
+    Layout = null;
+}
+<html>
+<head>
+    @Scripts.Render("~/bundles/easyui_scripts")
+    @Styles.Render("~/bundles/easyui_style")
+</head>
+<body style="padding: 0;">
+    <table id="dg" class="easyui-datagrid" style="width:100%;height:100%"
+           url="/Home/采购表DataGrid"
+           toolbar="#toolbar" pagination="true"
+           rownumbers="true" fitColumns="true" singleSelect="true" pageSize="20">
+        <thead>
+            <tr>
+                <th field="订单号" width="50">订单号</th>
+                <th field="产品名称" width="50">产品名称</th>
+                <th field="产品编号" width="50">产品编号</th>
+                <th field="采购数量" width="50">采购数量</th>
+                <th field="供应商名" width="50">供应商名</th>
+                <th field="供应商编号" width="50">供应商编号</th>
+                <th field="订单总额" width="50">订单总额</th>
+                <th field="采购时间" width="50">采购时间</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">新建采购单</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">编辑采购单</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">删除采购单</a>
+
+        <div style="float:right"><a href="#" class="easyui-linkbutton" onclick="viewAll()">查看全部</a></div>
+        <div style=" float:right">
+            产品名称:
+            <select id="产品搜索" class="easyui-combobox" panelHeight="auto" style="width:100px">
+            </select>
+            供应商名称:
+            <select id="供应商搜索" class="easyui-combobox" panelHeight="auto" style="width:100px">
+            </select>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="getUser()">搜索</a>
+        </div>
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'" tabindex=0>
+        <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px;font-size:12px">
+            <h3>采购入库单</h3>
+            <div style="margin-bottom:10px">
+                <input name="订单号" class="easyui-textbox" label="订单号:" id="订单号" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="产品名称" name="产品名称" class="easyui-combobox" required="true" label="产品名称:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="产品编号" name="产品编号" class="easyui-combobox" required="true" label="产品编号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="供应商名" name="供应商名" class="easyui-combobox" required="true" label="供应商名:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="供应商编号" name="供应商编号" class="easyui-combobox" required="true" label="供应商编号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="采购数量" name="采购数量" class="easyui-textbox" required="true" label="采购数量:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="订单总额" name="订单总额" class="easyui-textbox" required="true" label="订单总额:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="时间" name="采购时间" class="easyui-datebox" required="true" label="采购时间:" style="width:100%"></input>
+            </div>
+        </form>
+    </div>
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">关闭</a>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    // 页面加载函数，进行页面保护
+    $(function () {
+        var name = sessionStorage.getItem('name');
+        if (name == null) {
+            window.location = ("/Home/登录");
+        } else {
+            person = name; // 把person设为全局变量
+        }
+    });
+
+    // 设置产品名称下拉单
+    $.ajax({
+        type: 'post',
+        url: '/Home/采购表DataJson1',
+        data: {},
+        success: function (data) {
+            var comboData = [];
+            for (i = 0; i < data.length; i++) {
+                comboData.push({ value: data[i]["产品名称"], text: data[i]["产品名称"] });
+            }
+            $('#产品搜索').combobox("loadData", comboData);
+            $('#产品名称').combobox("loadData", comboData);
+           
+        }
+    });
+    $('#产品名称').combobox({
+        onChange: function (param) {
+            $('#产品编号').combobox('clear');
+            var store = $('#产品名称').combobox('getText');
+            $.ajax({
+                type: 'post',
+                url: '/Home/采购表DataJson1',
+                data: { number: store },
+                success: function (data) {
+                    var comboData = [];
+                    for (i = 0; i < data.length; i++) {
+                        comboData.push({ value: data[i]["产品编号"], text: data[i]["产品编号"] });
+                    }
+                    $('#产品编号').combobox("loadData", comboData);
+                }
+            });
+        }
+    });
+    // 设置供应商名称下拉单
+    $.ajax({
+        type: 'post',
+        url: '/Home/采购表DataJson2',
+        data: {},
+        success: function (data) {
+            var comboData = [];
+            for (i = 0; i < data.length; i++) {
+                comboData.push({ value: data[i]["供应商名称"], text: data[i]["供应商名称"] });
+            }
+            $('#供应商名').combobox("loadData", comboData);
+            $('#供应商搜索').combobox("loadData", comboData);
+        }
+    });
+    $('#供应商名').combobox({
+        onChange: function (param) {
+            $('#供应商编号').combobox('clear');
+            var store = $('#供应商名').combobox('getText');
+            $.ajax({
+                type: 'post',
+                url: '/Home/采购表DataJson2',
+                data: { number: store },
+                success: function (data) {
+                    var comboData = [];
+                    for (i = 0; i < data.length; i++) {
+                        comboData.push({ value: data[i]["供应商编号"], text: data[i]["供应商编号"] });
+                    }
+                    $('#供应商编号').combobox("loadData", comboData);
+                }
+            });
+        }
+    });
+    // 用的全局键入  easyui的textbox键入好像有点问题
+    $(window).keydown(function () {
+        if (event.keyCode == "13") {
+            $.ajax({
+                type: 'post',
+                url: '/Home/采购表DataJson3',
+                data: { number: $('#产品编号').val() },
+                success: function (data) {
+                    var amount = $('#采购数量').val();
+                    var price = data[0].价格;
+                    $('#订单总额').textbox('setValue', amount * price);
+                    $('#时间').next('span').find('input').focus();
+                       // $('#供应商编号').textbox('setValue', data[0]["供应商编号"]);
+                        // $('#订单总额').next('span').find('input').focus();
+                }
+            });
+        }
+    });
+    // 注意url里面不能有空格！！！！！
+    var url;
+    function newUser() {
+        $('#订单号').textbox('readonly');
+        $('#dlg').dialog('open').dialog('center').dialog('setTitle', '新建采购单');
+        $('#fm').form('clear');
+        url = "/Home/采购表Insert";
+        // 我在后台进行分页，同时请求后台取出最后一行的数据发给我
+        $.get("/Home/采购表Last", function (data) {
+            if (data) {
+                $('#订单号').textbox('setValue', parseInt(data) + 1);
+            }
+        });
+    }
+    function editUser() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle', '编辑采购单');
+            $('#fm').form('load', row);
+            url = '/Home/采购表UpDate';
+        }
+        alert('修改后无法自动生成入库单！！');
+    }
+    //当我点击保存时，我应该确定是修改内容还是提交内容 编辑用户时传入一个值告诉他是要更新 当我删除时传入一个值告诉他是要删除 我没有这么做啊！！  同时我需要传过取采购数量的值，系统自动来给我分配一个入库的目标货位号
+    function saveUser() {
+        $('#fm').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function (data) {
+                if (data == 2) {
+                    alert('采购未成功！货位架容量不足!');
+                }
+                $('#dlg').dialog('close');		// close the dialog
+                $('#dg').datagrid('reload');	// reload the user data
+                alert('采购单创建成功！请翻到最后一页查看！入库单同时创建成功！');
+            }
+        });
+    }
+    function destroyUser() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('确认', '是否删除这条记录?', function (r) {
+                if (r) {
+                    $.post('/Home/采购表Delete', { id: row.订单号 }, function (result) {
+                        if (result) {
+                            $('#dg').datagrid('reload');	// reload the user data
+                        }
+                    });
+                }
+            });
+        }
+    }
+    function getUser() {
+        var status = $('#产品搜索').combobox('getValue');
+        var status1 = $('#供应商搜索').combobox('getValue');
+        $('#dg').datagrid({
+            url: '/Home/采购表DataGrid',
+            queryParams: { id: status ,id1:status1}
+        })
+    }
+    function viewAll() {
+        $('#产品搜索').combobox('clear');
+        $('#供应商搜索').combobox('clear');
+        $('#dg').datagrid({
+            url: '/Home/采购表DataGrid',
+            queryParams: { id: "", id1: "" }
+        })
+    }
+</script>

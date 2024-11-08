@@ -1,0 +1,313 @@
+﻿
+@{
+    ViewBag.Title = "货位表";
+    Layout = null;
+}
+<html>
+<head>
+    @Scripts.Render("~/bundles/easyui_scripts")
+    @Styles.Render("~/bundles/easyui_style")
+</head>
+<body style="padding: 0;">
+    <table id="dg" class="easyui-datagrid" style="width:100%;height:100%"
+           url="/Home/货位表DataGrid"
+           toolbar="#toolbar" pagination="true"
+           rownumbers="true" fitColumns="true" singleSelect="true"pageSize="20">
+        <thead>
+            <tr>
+                <th field="货位编号" width="50">货位编号</th>
+                <th field="最大库存量" width="50">最大库存量</th>
+                <th field="已用库存量" width="50">已用库存量</th>
+                <th field="电子标签信息" width="50">电子标签信息</th>
+                <th data-options="field:'灯光状态',formatter:planUrl" width="50">灯光状态</th>
+                <th field="所在库区" width="50">所在库区</th>
+                <th field="存放产品" width="50">存放产品</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <!--
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">新建货位</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">修改最大库存量</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">删除货位</a>
+            -->
+        <div>
+            所在库区:
+            <select id="所在库区" class="easyui-combobox" panelHeight="auto" style="width:100px">
+                <option value="ALL">All</option>
+                <option value="A区">A区</option>
+                <option value="B区">B区</option>
+                <option value="C区">C区</option>
+                <option value="D区">D区</option>
+            </select>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="getUser()">搜索</a>
+        </div>
+    </div>
+    <div id="dlg" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'">
+        <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px;font-size:12px">
+            <h3>移库单</h3>
+            <div style="margin-bottom:10px">
+                <input id="移库单号" name="移库单号" class="easyui-textbox" label="移库单号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="电子标签移库数" name="电子标签移库数" class="easyui-textbox" required="true" label="移库数:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="目标货位号" name="目标货位号" class="easyui-combobox" required="true" label="目标货位号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="当前货位号" name="当前货位号" class="easyui-textbox" required="true" label="当前货位号:" style="width:100%">
+            </div>
+        </form>
+    </div>
+    <!--
+    <div id="dlg1" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons1'">
+        <form id="fm1" method="post" novalidate style="margin:0;padding:20px 50px;font-size:12px">
+            <h3>移库单</h3>
+            <div style="margin-bottom:10px">
+                <input id="移库单号" name="移库单号" class="easyui-textbox" required="true" label="移库单号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="电子标签移库数" class="easyui-textbox" required="true" label="移库数:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="目标货位号" name="电子标签货位号" class="easyui-combobox" required="true" label="目标货位号:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="当前货位号" name="当前货位号" class="easyui-textbox" label="当前货位号:" style="width:100%">
+            </div>
+        </form>
+    </div>
+        -->
+
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript: $('#dlg').dialog('close');$('#dg').datagrid('unselectAll');" style="width:90px">关闭</a>
+    </div>
+    <!--
+    <div id="dlg-buttons1">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser1()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg1').dialog('close')" style="width:90px">关闭</a>
+    </div>
+        -->
+</body>
+</html>
+<script type="text/javascript">
+     // 页面加载函数，进行页面保护
+    $(function () {
+        var name = sessionStorage.getItem('name');
+        if (name == null) {
+            window.location = ("/Home/登录");
+        } else {
+            person = name; // 把person设为全局变量
+        }
+    });
+
+    // 页面打开时 加载函数,这个函数是用来给货位类型为等待移库时，自动建立一条移库数据
+    var url;
+    $.ajax({
+        type: 'post',
+        url: '/Home/移库表DataJson1',
+        data: {},
+        success: function (data) {
+            var comboData = [];
+            for (i = 0; i < data.length; i++) {
+                comboData.push({ value: data[i]["货位编号"], text: data[i]["货位编号"] });
+            }
+            $('#目标货位号').combobox("loadData", comboData);
+        }
+    });
+
+    // 设置目标货位号的下拉框
+
+    function planUrl(val, row) {
+        if (val == '入库') {
+            return '<a href="javascript:void(0)"  onclick="" style="width:90px;color:red;">入库</a>';
+        } else if (val == '出库') {
+            return '<a href="javascript:void(0)"  onclick="" style="width:90px;color:green;">出库</a>';
+        } else if (val == '移库') {
+            return '<a href="javascript:void(0)"  onclick="newUser();" style="width:90px;color:orange;">移库</a>';
+        } else if (val == '移入') {
+            return '<a href="javascript:void(0)"  onclick="" style="width:90px;color:blue;">移入</a>';
+        }else {
+            return val;
+        }
+    }
+    function getUser() {
+        // 实现它的查询！！！！！
+        var status = $('#所在库区').combobox('getValue');
+        $('#dg').datagrid({
+            url: '/Home/货位表DataGrid',
+            queryParams: { number: status }
+        })
+    }
+    /* onloadsuccess可以 getData 但是要注意去掉标签class属性里的easyui-datagrid  这样控价就不会被初始化两次！！！
+
+     $(function () {
+        $('#dg').datagrid({
+            onLoadSuccess: function (data) {
+            }
+        });
+    });
+    */
+    function newUser() {
+
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+
+            $.get("/Home/移库表Last", function (data) {
+                if (data) {
+                    $('#移库单号').textbox('setValue', parseInt(data) + 1);
+                }
+            });
+            $('#移库单号').textbox('readonly');
+            $('#当前货位号').textbox('readonly');
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle', '新建移库单');
+            $('#fm').form('clear');
+            url = '/Home/移库表Insert';
+            $('#当前货位号').textbox('setValue', row.货位编号);
+
+        };
+    }
+    function saveUser() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row.电子标签信息 != 0) {
+            alert('正在移库！请勿重复操作！');
+            $('#dlg').dialog('close');
+            return;
+        }
+        $('#fm').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function () {
+                $('#dlg').dialog('close');		// close the dialog
+                $('#dg').datagrid('reload');	// reload the user data
+            }
+        });
+    }
+        /*function newUser() {
+        // 新建货位时启用相关控件
+        $('#id').textbox('readonly');
+        $('#货位编号').textbox('readonly', false);
+        $('#已用库存量').textbox('readonly');
+        $('#仓库').textbox('readonly', false);
+        $('#货位类型').textbox('readonly');
+        // 把后台仓库数据绑定到combobox控件上
+        $.ajax({
+            type: 'post',
+            url: '/Home/入库表DataJson',
+            data: {},
+            success: function (data) {
+                var comboData = [];
+                for (i = 0; i < data.length; i++) {
+                    comboData.push({ value: data[i]["仓库"], text: data[i]["仓库"] });
+                }
+                $('#仓库').combobox("loadData", comboData);
+            }
+        })
+        //
+        $('#dlg').dialog('open').dialog('center').dialog('setTitle', '新建货位单');
+        $('#fm').form('clear');
+        //当我点击新建时，一些textbox值要固定,id 已用库存量和货位类型都要固定
+        $('#已用库存量').textbox('setText', '0');
+        $('#货位类型').textbox('setText', '等待出入');
+        url = "/Home/货位表Insert";
+        // 我在后台进行分页，同时请求后台取出最后一行的数据发给我
+        $.get("/Home/货位表Last", function (data) {
+            if (data) {
+                $('#id').textbox('setValue', parseInt(data) + 1);
+            }
+        });
+
+    }
+    function newYK() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            // 注意移库单号和当前货位号颜色显示有问题！！！  可能的原因是一个从后台读取数据  一个从前台操作数据！！！！！！！！
+            $('#移库单号').textbox('readonly');
+            $('#当前货位号').textbox('readonly');
+            $('#dlg1').dialog('open').dialog('center').dialog('setTitle', '新建移库单');
+            $('#fm1').form('clear');
+            // 给移库单号一个值
+            $.get("/Home/移库表Last", function (data) {
+                if (data) {
+                    $('#移库单号').textbox('setValue', parseInt(data) + 1);
+                }
+            });
+            // 把后台货位数据绑定到目标货位号上
+            $.ajax({
+                type: 'post',
+                url: '/Home/货位表DataJson',
+                data: {},
+                success: function (data) {
+                    var comboData = [];
+                    for (i = 0; i < data.length; i++) {
+                        comboData.push({ value: data[i]["货位编号"], text: data[i]["货位编号"] });
+                    }
+                    $('#目标货位号').combobox("loadData", comboData);
+                }
+            })
+            // 给当前货位数一个固定值
+            var row = $('#dg').datagrid('getSelected');
+            var value = row.货位编号;
+            $('#当前货位号').textbox('setValue', value);
+            url = "/Home/移库表Insert";
+        }
+    }
+    function saveUser1() {
+        $('#fm1').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function () {
+                $('#dlg1').dialog('close');		// close the dialog
+                $('#dg').datagrid('reload');	// reload the user data
+            }
+        });
+        alert('移库单已生成，请前往移库表查看详情');
+    }
+    function editUser() {
+        // id 货位编号、已用库存量、仓库、货位类型不能让他编辑 只读模式
+        $('#id').textbox('readonly');
+        $('#货位编号').textbox('readonly');
+        $('#已用库存量').textbox('readonly');
+        $('#仓库').textbox('readonly');
+        $('#货位类型').textbox('readonly');
+
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle', '编辑货位单');
+            $('#fm').form('load', row);
+            url = '/Home/货位表UpDate';
+        }
+    }
+    function saveUser() {
+        $('#fm').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function () {
+                $('#dlg').dialog('close');		// close the dialog
+                $('#dg').datagrid('reload');	// reload the user data
+            }
+        });
+    }
+    function destroyUser() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('确认', '是否删除这条记录?', function (r) {
+                if (r) {
+                    $.post('/Home/货位表Delete', { id: row.id }, function (result) {
+                        if (result) {
+                            $('#dg').datagrid('reload');	// reload the user data
+                        }
+                    });
+                }
+            });
+        }
+    }*/
+</script>

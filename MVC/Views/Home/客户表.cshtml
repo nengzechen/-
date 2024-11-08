@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "客户表";
+    Layout = null;
+}
+<html>
+<head>
+    @Scripts.Render("~/bundles/easyui_scripts")
+    @Styles.Render("~/bundles/easyui_style")
+</head>
+<body style="padding: 0;">
+    <table id="dg" class="easyui-datagrid" style="width:100%;height:100%"
+           url="/Home/客户表DataGrid"
+           toolbar="#toolbar" pagination="true"
+           rownumbers="true" fitColumns="true" singleSelect="true"pageSize="20">
+        <thead>
+            <tr>
+                <th field="客户编号" width="50">客户编号</th>
+                <th field="客户名称" width="50">客户名称</th>
+                <th field="电话" width="50">电话</th>
+                <th field="传真" width="50">传真</th>
+                <th field="邮箱" width="50">邮箱</th>
+                <th field="联系人" width="50">联系人</th>
+                <th field="地址" width="50">地址</th>
+                <th field="创建时间" width="50">创建时间</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">新建产品单</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">编辑产品单</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">删除产品单</a>
+    </div>
+
+    <div id="dlg" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'">
+        <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px;font-size:12px">
+            <h3>客户单</h3>
+            <div style="margin-bottom:10px">
+                <input name="客户编号" class="easyui-textbox" required="true" label="客户编号:" id="客户编号" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="客户名称" class="easyui-textbox" required="true" label="客户名称:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="电话" class="easyui-textbox" required="true" label="电话:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="传真" class="easyui-textbox" required="true" label="传真:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="邮箱" class="easyui-textbox" required="true" label="邮箱:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="联系人" class="easyui-textbox" required="true" label="联系人:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="地址" class="easyui-textbox" required="true" label="地址:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="创建时间" class="easyui-datebox" required="true" label="创建时间:" style="width:100%">
+            </div>
+        </form>
+    </div>
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">关闭</a>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    // 页面加载函数，进行页面保护
+    $(function () {
+        var name = sessionStorage.getItem('name');
+        if (name == null) {
+            window.location = ("/Home/登录");
+        } else {
+            person = name; // 把person设为全局变量
+        }
+    });
+    var url;
+    function newUser() {
+        $('#dlg').dialog('open').dialog('center').dialog('setTitle', '新建客户单');
+        $('#fm').form('clear');
+        url = "/Home/客户表Insert";
+    }
+    function editUser() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle', '编辑客户单');
+            $('#fm').form('load', row);
+            url = '/Home/客户表UpDate';
+        }
+    }
+    function saveUser() {
+        $('#fm').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function () {
+                $('#dlg').dialog('close');		// close the dialog
+                $('#dg').datagrid('reload');	// reload the user data
+            }
+        });
+    }
+    function destroyUser() {
+        var row = $('#dg').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('确认', '是否删除这条记录?', function (r) {
+                if (r) {
+                    $.post('/Home/客户表Delete', { id: row.客户编号 }, function (result) {
+                        if (result) {
+                            $('#dg').datagrid('reload');	// reload the user data
+                        }
+                    });
+                }
+            });
+        }
+    }
+</script>
